@@ -1,0 +1,22 @@
+/**
+ * @file
+ * Declaración de la clase @@CLASSNAME@@.
+ * @author @@AUTHOR@@
+ * @date @@DATE@@
+ * @copyright @@LICENSE@@
+ */
+
+#ifndef @@HEADER_GUARD@@
+#define @@HEADER_GUARD@@
+
+/**
+ * Clase @@CLASSNAME@@
+ */
+class @@CLASSNAME@@@@BASE_SYNTAX@@
+{
+public:
+    @@CLASSNAME@@();
+    virtual ~@@CLASSNAME@@() {}
+};
+
+#endif // @@HEADER_GUARD@@

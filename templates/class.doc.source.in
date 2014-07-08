@@ -1,0 +1,17 @@
+/**
+ * @file
+ * Implementación de la clase @@CLASSNAME@@.
+ * @author @@AUTHOR@@
+ * @date @@DATE@@
+ * @copyright @@LICENSE@@
+ */
+ 
+#include "@@HEADER_FILENAME@@"
+
+/**
+ * Constructor.
+ */
+@@CLASSNAME@@::@@CLASSNAME@@()
+{
+    // Código del constructor de la clase.
+}

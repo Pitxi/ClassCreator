@@ -1,0 +1,25 @@
+/**
+ * @file
+ * Implementación de la clase @@CLASSNAME@@.
+ * @author @@AUTHOR@@
+ * @date @@DATE@@
+ * @copyright @@LICENSE@@
+ */
+ 
+#include "@@HEADER_FILENAME@@"
+
+/**
+ * Espacio de nombres @@NAMESPACE@@.
+ */
+namespace @@NAMESPACE@@
+{
+
+/**
+ * Constructor.
+ */
+@@CLASSNAME@@::@@CLASSNAME@@()
+{
+    // Código del constructor de la clase.
+}
+
+} // @@NAMESPACE@@

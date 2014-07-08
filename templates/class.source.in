@@ -1,0 +1,6 @@
+#include "@@HEADER_FILENAME@@"
+
+@@CLASSNAME@@::@@CLASSNAME@@()
+{
+    // Código del constructor de la clase.
+}

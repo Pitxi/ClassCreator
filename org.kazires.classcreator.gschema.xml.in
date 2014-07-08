@@ -1,0 +1,35 @@
+<schemalist>
+  <schema id="@APP_ID@" path="@APP_PATH@" gettext-domain="@APP_ID@">
+  
+    <key name="author" type="s">
+      <default>""</default>
+      <summary>Author for documentation.</summary>
+      <description>The author name that wil be used in the new class documentation.</description>
+    </key>
+    
+    <key name="date-format" type="s">
+      <default>"%Y"</default>
+      <summary>Date format for documentation.</summary>
+      <description>The format as used by strftime C function for the date in the new class documentation.</description>
+    </key>
+    
+    <key name="license" type="s">
+      <default>"GNU Public License Version 3"</default>
+      <summary>Default license for documentation.</summary>
+      <description>The default license that will be used in the new class documentation.</description>
+    </key>
+    
+    <key name="header-ext" type="s">
+      <default>"h"</default>
+      <summary>Header file extension.</summary>
+      <description>The class header file extension used by default.</description>
+    </key>
+    
+    <key name="source-ext" type="s">
+      <default>"cpp"</default>
+      <summary>Source file extension.</summary>
+      <description>The class source file extension used by default.</description>
+    </key>
+    
+  </schema>
+</schemalist>

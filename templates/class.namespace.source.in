@@ -1,0 +1,11 @@
+#include "@@HEADER_FILENAME@@"
+
+namespace @@NAMESPACE@@
+{
+
+@@CLASSNAME@@::@@CLASSNAME@@()
+{
+    // Código del constructor de la clase.
+}
+
+} // @@NAMESPACE@@
