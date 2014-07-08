@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="@APP_ID@" path="@APP_PATH@" gettext-domain="@PACKAGE@">
+    <key name="author" type="s">
+      <default>""</default>
+      <summary>Author for documentation.</summary>
+      <description>The author name that wil be used in the new class documentation.</description>
+    </key>
+
+    <key name="copyright-holder" type="s">
+      <default>""</default>
+      <summary>Copyright holder.</summary>
+      <description>The name of the copyright holder of the new class.</description>
+    </key>
+
+    <key name="date-format" type="s">
+      <default>"%Y"</default>
+      <summary>Date format for documentation.</summary>
+      <description>The format as used by strftime C function for the date in the new class documentation.</description>
+    </key>
+
+    <key name="license-info" type="s">
+      <default>"Distributeed under the terms of the GNU General Public License version 3 or
+later.
+
+This software is distributed WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this software. If not, see &lt;http://www.gnu.org/licenses/&gt;."</default>
+      <summary>The informative text about the license.</summary>
+      <description>Informative text with the name of the license and additional information about the distribution and publication of the code.</description>
+    </key>
+
+    <key name="header-ext" type="s">
+      <default>"hpp"</default>
+      <summary>Header file extension.</summary>
+      <description>The class header file extension used by default.</description>
+    </key>
+
+    <key name="source-ext" type="s">
+      <default>"cpp"</default>
+      <summary>Source file extension.</summary>
+      <description>The class source file extension used by default.</description>
+    </key>
+
+    <key name="last-folder" type="s">
+        <default>""</default>
+        <summary>Last folder used.</summary>
+        <description>The last folder used by ClassCreator to create and save a new C++ class.</description>
+    </key>
+  </schema>
+</schemalist>

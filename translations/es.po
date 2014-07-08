@@ -1,0 +1,250 @@
+# Spanish translations for classcreator package
+# Traducciones al español para el paquete classcreator.
+# Copyright (C) 2014 Javier Campón Pichardo
+# This file is distributed under the same license as the classcreator package.
+# Javier Campón <javiercamponp@gmail.com>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: classcreator 0.0.1\n"
+"Report-Msgid-Bugs-To: javiercampon@gmail.com\n"
+"POT-Creation-Date: 2014-07-23 17:56-0400\n"
+"PO-Revision-Date: 2014-07-23 17:46-0400\n"
+"Last-Translator: Javier Campón <javiercamponp@gmail.com>\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: resources/gui/classinfogrid.glade:24
+msgid "Angle brackets"
+msgstr "Comillas angulares"
+
+#: resources/gui/classinfogrid.glade:28
+msgid "Double quotes"
+msgstr "Dobles comillas"
+
+#: resources/gui/classinfogrid.glade:52
+msgid "Public"
+msgstr "Público"
+
+#: resources/gui/classinfogrid.glade:56
+msgid "Protected"
+msgstr "Protegido"
+
+#: resources/gui/classinfogrid.glade:60
+msgid "Private"
+msgstr "Privado"
+
+#: resources/gui/classinfogrid.glade:75
+msgid "Class name:"
+msgstr "Nombre de la clase:"
+
+#: resources/gui/classinfogrid.glade:89
+msgid "Namespace:"
+msgstr "Espacio de nombres:"
+
+#: resources/gui/classinfogrid.glade:107 resources/gui/classinfogrid.glade:124
+#: resources/gui/classinfogrid.glade:125 resources/gui/confirmgrid.glade:84
+#: resources/gui/confirmgrid.glade:99 resources/gui/confirmgrid.glade:100
+#: resources/gui/docinfogrid.glade:96 resources/gui/docinfogrid.glade:112
+#: resources/gui/docinfogrid.glade:113 resources/gui/docinfogrid.glade:129
+#: resources/gui/docinfogrid.glade:130 resources/gui/preferencesgrid.glade:33
+#: resources/gui/preferencesgrid.glade:107
+#: resources/gui/preferencesgrid.glade:108
+#: resources/gui/preferencesgrid.glade:124
+#: resources/gui/preferencesgrid.glade:125
+#: resources/gui/preferencesgrid.glade:141
+#: resources/gui/preferencesgrid.glade:142
+#: resources/gui/preferencesgrid.glade:196
+#: resources/gui/preferencesgrid.glade:197
+msgid "Clear text."
+msgstr "Borrar texto."
+
+#: resources/gui/classinfogrid.glade:174
+msgid "File to be included"
+msgstr "Fichero a incluir"
+
+#: resources/gui/classinfogrid.glade:188
+msgid "Delimiter"
+msgstr "Delimitador"
+
+#: resources/gui/classinfogrid.glade:222 resources/gui/classinfogrid.glade:359
+msgid "Adds a new include to the class."
+msgstr "Añade una nueva línea de inclusión a la clase."
+
+#: resources/gui/classinfogrid.glade:223 resources/gui/classinfogrid.glade:360
+msgid "Add"
+msgstr "Añadir"
+
+#: resources/gui/classinfogrid.glade:236 resources/gui/classinfogrid.glade:373
+msgid "Removes the selected include."
+msgstr "Elimina la línea de inclusión seleccionada."
+
+#: resources/gui/classinfogrid.glade:237 resources/gui/classinfogrid.glade:374
+msgid "Remove"
+msgstr "Eliminar"
+
+#: resources/gui/classinfogrid.glade:261
+msgid "Includes"
+msgstr "Inclusiones"
+
+#: resources/gui/classinfogrid.glade:311
+msgid "Base class name"
+msgstr "Nombre de clase base"
+
+#: resources/gui/classinfogrid.glade:325
+msgid "Inheritance type"
+msgstr "Tipo de herencia"
+
+#: resources/gui/classinfogrid.glade:398
+msgid "Base classes"
+msgstr "Clases base"
+
+#: resources/gui/confirmgrid.glade:66
+msgid "Class header file"
+msgstr "Fichero de cabecera de la clase"
+
+#: resources/gui/confirmgrid.glade:114 resources/gui/confirmgrid.glade:129
+msgid "Select file name and location to save."
+msgstr "Selecciona nombre de fichero y localización para guardar."
+
+#: resources/gui/confirmgrid.glade:141
+msgid "Class header file:"
+msgstr "Fichero de cabecera de la clase:"
+
+#: resources/gui/confirmgrid.glade:158
+msgid "Class source file:"
+msgstr "Fichero fuente de la clase:"
+
+#: resources/gui/confirmgrid.glade:220
+msgid "Class source file"
+msgstr "Fichero fuente de la clase"
+
+#: resources/gui/docinfogrid.glade:36 resources/gui/preferencesgrid.glade:15
+msgid "Author:"
+msgstr "Autor:"
+
+#: resources/gui/docinfogrid.glade:50 resources/gui/preferencesgrid.glade:178
+msgid "Copyright holder:"
+msgstr "Titular de los derechos de copia:"
+
+#: resources/gui/docinfogrid.glade:64 resources/gui/preferencesgrid.glade:47
+msgid "Date format:"
+msgstr "Formato de fecha:"
+
+#: resources/gui/docinfogrid.glade:79 resources/gui/preferencesgrid.glade:62
+msgid "License info:"
+msgstr "Información de licencia:"
+
+#: resources/gui/docinfogrid.glade:164
+msgid "Include class documentation."
+msgstr "Incluir documentación de la clase."
+
+#: resources/gui/docinfogrid.glade:184 resources/gui/docinfogrid.glade:200
+#: resources/gui/docinfogrid.glade:216 resources/gui/docinfogrid.glade:232
+msgid "Load default value."
+msgstr "Cargar valor por defecto."
+
+#: resources/gui/preferencesgrid.glade:76
+msgid "Header extension:"
+msgstr "Extensión del fichero de cabecera:"
+
+#: resources/gui/preferencesgrid.glade:90
+msgid "Source extension:"
+msgstr "Extensión del fichero fuente:"
+
+#: src/classcreatorassistant.cpp:80
+msgid "Introduction"
+msgstr "Introducción"
+
+#: src/classcreatorassistant.cpp:85
+msgid "Class info"
+msgstr "Información de la clase."
+
+#: src/classcreatorassistant.cpp:89
+msgid "Documentation"
+msgstr "Documentación"
+
+#: src/classcreatorassistant.cpp:94
+msgid "Confirmation"
+msgstr "Confirmación"
+
+#: src/classinfopage.cpp:160
+msgid "New C++ Class information"
+msgstr "Información de la nueva clase C++"
+
+#: src/confirmpage.cpp:142
+msgid "Choose a name and location for the header file..."
+msgstr "Escoja un nombre y una localización para el fichero de cabecera..."
+
+#: src/confirmpage.cpp:147
+msgid "C++ header files"
+msgstr "Ficheros de cabecera C++"
+
+#: src/confirmpage.cpp:150
+msgid "C++ source files"
+msgstr "Ficheros fuente C++"
+
+#: src/confirmpage.cpp:153
+msgid "All files"
+msgstr "Todos los ficheros"
+
+#: src/confirmpage.cpp:158
+msgid "Choose a name and location for the source file..."
+msgstr "Escoja un nombre y una localización para el fichero fuente..."
+
+#: src/confirmpage.cpp:177
+msgid "Select"
+msgstr "Seleccionar"
+
+#: src/confirmpage.cpp:178
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/confirmpage.cpp:190
+msgid "Confirm the new C++ Class files creation"
+msgstr "Confirmar la creación de los ficheros de la nueva clase C++"
+
+#: src/docinfopage.cpp:64 src/preferencesdialog.cpp:66
+msgid "Example"
+msgstr "Ejemplo"
+
+#: src/docinfopage.cpp:105
+msgid "Class documentation info"
+msgstr "Información para la documentación de la clase"
+
+#: src/intropage.cpp:52
+msgid "Create a new C++ class"
+msgstr "Crear una nueva clase C++"
+
+#: src/intropage.cpp:54
+msgid ""
+"The %1 tool will assist you in the creation of a new C++ class\n"
+"by generating the needed source and header files with the provided "
+"information.\n"
+"\n"
+"In this page you also can set the %1 preferences by clicking on the "
+"preferences button.\n"
+"\n"
+"Press Continue to start or Cancel to exit."
+msgstr ""
+"La herramienta %1 le asistirá en la creación de una nueva clase C++\n"
+"generando los ficheros de cabecera y fuente necesarios a partir de la "
+"información proveída.\n"
+"\n"
+"Puse Continuar para comenzar o Cancelar para salir."
+
+#: src/intropage.cpp:58
+msgid "_Preferences"
+msgstr "_Preferencias"
+
+#: src/intropage.cpp:59
+msgid "_About %1..."
+msgstr "_Acerca de %1..."
+
+#: src/preferencesdialog.cpp:93
+msgid "Preferences"
+msgstr "Preferencias"

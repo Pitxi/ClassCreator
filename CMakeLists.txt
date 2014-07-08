@@ -1,140 +1,195 @@
-cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+# ------------------------------------------------------------------------------
+# A GTK based GUI Utility to create the header and source files for a C++ Class.
+#
+# Copyleft 2014 Javier Campón Pichardo
+#
+# Distributed under the GNU GPL version 3 license.
+#
+# This software is distributed WITHOUT ANY WARRANTY; See the license for more
+# information.
+# ------------------------------------------------------------------------------
 
-project ("Class Creator")
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+project("Class Creator")
 
-find_package (PkgConfig REQUIRED)
-pkg_check_modules (GTKMM REQUIRED "gtkmm-3.0 >= 3.8.1")
-pkg_check_modules (GTKSVMM REQUIRED "gtksourceviewmm-3.0 >= 3.2.0")
+# ---------------------
+# Project configuration
+# ---------------------
 
-include_directories (${GTKMM_INCLUDE_DIRS} ${GTKSVMM_INCLUDE_DIRS})
-link_directories (${GTKMM_LIBRARY_DIRS} ${GTKSVMM_LIBRARY_DIRS})
-add_definitions (${GTKMM_CFLAGS_OTHER} ${GTKSVMM_CFLAGS_OTHER})
+# Include custom modules path.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake modules")
 
-# -----------------------
-# Opciones del compilador
-# -----------------------
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif ()
+# Colours for messages.
+find_package(Colours)
 
-# ---------------
-# Message colours
-# ---------------
-string (ASCII 27 ESCAPE)
-set (COLOUR_RESET "${ESCAPE}[m")
-set (GREEN "${ESCAPE}[32m")
+# Use DEBUG build type by default.
+if(NOT CMAKE_BUILD_TYPE STREQUAL "RELEASE")
+    set(CMAKE_BUILD_TYPE "DEBUG")
+endif()
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake modules")
+set(PROJECT_TEMPLATE_DIR "${PROJECT_SOURCE_DIR}/templates")
 
-# ------------------------------
-# Configuración de la aplicación
-# ------------------------------
-set (VERSION_MAJOR 1)
-set (VERSION_MINOR 0)
-set (VERSION_MICRO 0)
-set (APP_ID "org.kazires.classcreator")
-set (APP_PATH "/org/kazires/classcreator/")
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 0)
+set(VERSION_MICRO 1)
 
-configure_file ("${PROJECT_SOURCE_DIR}/${APP_ID}.gschema.xml.in" "${PROJECT_BINARY_DIR}/schemas/${APP_ID}.gschema.xml")
-configure_file ("${PROJECT_SOURCE_DIR}/${APP_ID}.gresource.xml.in" "${PROJECT_BINARY_DIR}/resources/${APP_ID}.gresource.xml")
+set(PACKAGE     "classcreator")
+set(LOCALE_DIR  "/usr/share/locale")
+if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+    set(LOCALE_DIR "./locale")
+endif()
+set(APP_ID      "org.kazires.${PACKAGE}")
+set(APP_PATH    "/org/kazires/${PACKAGE}/")
 
-execute_process (COMMAND glib-compile-resources --generate-source "--sourcedir=${PROJECT_SOURCE_DIR}" "${APP_ID}.gresource.xml" "--target=${PROJECT_SOURCE_DIR}/src/resources.c"
-                 COMMAND glib-compile-resources --generate-header "--sourcedir=${PROJECT_SOURCE_DIR}" "${APP_ID}.gresource.xml" "--target=${PROJECT_SOURCE_DIR}/src/resources.h"
-                 WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/resources"
-                 RESULT_VARIABLE EXIT_CODE
-                 ERROR_VARIABLE ERROR_MESSAGE)
-if (EXIT_CODE GREATER 0)
-    message (FATAL_ERROR "Error ${EXIT_CODE}: ${ERROR_MESSAGE}")
-endif ()
+configure_file("${PROJECT_TEMPLATE_DIR}/config.h.in"      "${PROJECT_SOURCE_DIR}/src/config.hpp" @ONLY)
+configure_file("${PROJECT_TEMPLATE_DIR}/gschema.xml.in"   "${PROJECT_BINARY_DIR}/schemas/${APP_ID}.gschema.xml" @ONLY)
+configure_file("${PROJECT_TEMPLATE_DIR}/gresource.xml.in" "${PROJECT_BINARY_DIR}/${APP_ID}.gresource.xml" @ONLY)
 
-if (NOT CMAKE_BUILD_TYPE)
-    set (CMAKE_BUILD_TYPE "Debug")
-endif ()
+# Compiling local schemas.
+add_custom_target(gschema ALL
+                  COMMAND glib-compile-schemas "${PROJECT_BINARY_DIR}/schemas"
+                  COMMENT "Compiling GLib settings schema file..." VERBATIM)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set (DEBUG_DEFINE "#define DEBUG")
-    execute_process (COMMAND glib-compile-schemas "${PROJECT_BINARY_DIR}/schemas"
-                     RESULT_VARIABLE EXIT_CODE
-                     ERROR_VARIABLE ERROR_MESSAGE)
-    if (EXIT_CODE GREATER 0)
-        message (FATAL_ERROR "Error ${EXIT_CODE}: ${ERROR_MESSAGE}")
-    endif ()
-endif ()
+# Embedding resources into the code.
+execute_process(COMMAND glib-compile-resources --generate-source "--sourcedir=${PROJECT_SOURCE_DIR}" "${APP_ID}.gresource.xml" "--target=${PROJECT_SOURCE_DIR}/src/resources.c"
+                COMMAND glib-compile-resources --generate-header "--sourcedir=${PROJECT_SOURCE_DIR}" "${APP_ID}.gresource.xml" "--target=${PROJECT_SOURCE_DIR}/src/resources.h"
+                WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+                RESULT_VARIABLE   Result
+                ERROR_VARIABLE    ErrorOutput)
+if(Resutl EQUAL 0)
+    message(FATAL_ERROR "${Red}Error Code ${Result}\nError Message: ${ErrorOutput}${ColourReset}")
+endif()
 
-configure_file ("${PROJECT_SOURCE_DIR}/config.h.in" "${PROJECT_SOURCE_DIR}/src/config.h" @ONLY)
-
-# -------------
-# Documentación
-# -------------
-set (PROJECT_BRIEF "Utilidad para generar nuevas clases de C++.")
-find_package (Doxygen)
-if (DOXYGEN_FOUND)
-    configure_file (${PROJECT_SOURCE_DIR}/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile @ONLY)
-    add_custom_target (doc
-                       ${DOXYGEN_EXECUTABLE} "${PROJECT_BINARY_DIR}/Doxyfile"
-                       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-                       COMMENT "Generating documentation with Doxygen" VERBATIM)
-    message (STATUS "${GREEN}Use make doc to generate the documentation.${COLOUR_RESET}")
-endif ()
-
-set (SOURCES
-     src/main.cpp
-     src/classcreatorassistant.cpp
-     src/preferencesdialog.cpp
-     src/datepicker.cpp
-     src/inheritancetreeview.cpp
-     src/assistantpage.cpp
-     src/intropage.cpp
-     src/classpage.cpp
-     src/documentationpage.cpp
-     src/confirmpage.cpp
-     src/resources.c)
-
-set (HEADERS
-     src/config.h
-     src/classcreatorassistant.h
-     src/preferencesdialog.h
-     src/datepicker.h
-     src/inheritancetreeview.h
-     src/assistantpage.h
-     src/intropage.h
-     src/classpage.h
-     src/documentationpage.h
-     src/confirmpage.h
-     src/resources.h)
-
-add_executable (classcreator ${SOURCES} ${HEADERS})
-target_link_libraries (classcreator ${GTKMM_LIBRARIES} ${GTKSVMM_LIBRARIES})
+# ----------------------
+# Compiler configuration
+# ----------------------
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
 
 # -----------------------
-# Objetivo de instalación
+# Libraries configuration
 # -----------------------
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    execute_process (COMMAND "${PKG_CONFIG_EXECUTABLE}" glib-2.0 --variable=exec_prefix
-                     RESULT_VARIABLE EXIT_CODE
-                     OUTPUT_VARIABLE GLIB2_PREFIX
-                     ERROR_VARIABLE ERROR_MESSAGE
-                     OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if (EXIT_CODE GREATER 0)
-        message (FATAL_ERROR "Error ${EXIT_CODE}: ${ERROR_MESSAGE}")
-    endif ()
+find_package(PkgConfig REQUIRED)
 
-    set (GSETTINGS_SCHEMA_DIR "${GLIB2_PREFIX}/share/glib-2.0/schemas")
+pkg_check_modules(GTKMM REQUIRED "gtkmm-3.0 >= 3.8.1")
+pkg_check_modules(GTKSOURCEVIEWMM REQUIRED "gtksourceviewmm-3.0 >= 3.2.0")
 
-    configure_file ("${PROJECT_SOURCE_DIR}/compile-schemas.cmake.in" "${PROJECT_BINARY_DIR}/compile-schemas.cmake" @ONLY)
+include_directories(${GTKMM_INCLUDE_DIRS} ${GTKSOURCEVIEWMM_INCLUDE_DIRS})
+link_directories   (${GTKMM_LIBRARY_DIRS} ${GTKSOURCEVIEWMM_LIBRARY_DIRS})
+add_definitions    (${GTKMM_CFLAGS_OTHER} ${GTKSOURCEVIEWMM_CFLAGS_OTHER})
 
-    install (TARGETS classcreator
-             RUNTIME DESTINATION bin
-             LIBRARY DESTINATION lib
-             ARCHIVE DESTINATION lib)
-    install (FILES "${PROJECT_BINARY_DIR}/schemas/${APP_ID}.gschema.xml" DESTINATION "${GSETTINGS_SCHEMA_DIR}")
-    install (SCRIPT "${PROJECT_BINARY_DIR}/compile-schemas.cmake")
+## -----------
+# Source code
+# -----------
+set(SOURCES
+    src/resources.c
+    src/main.cpp
+    src/resourcemanager.cpp
+    src/classcreatorassistant.cpp
+    src/preferencesdialog.cpp
+    src/assistantpage.cpp
+    src/intropage.cpp
+    src/classinfopage.cpp
+    src/docinfopage.cpp
+    src/confirmpage.cpp)
 
-    message (STATUS "${GREEN}Use make install to install the application.${COLOUR_RESET}")
+set(HEADERS
+    src/config.hpp
+    src/resources.h
+    src/resourcemanager.hpp
+    src/classcreatorassistant.hpp
+    src/preferencesdialog.hpp
+    src/assistantpage.hpp
+    src/intropage.hpp
+    src/classinfopage.hpp
+    src/docinfopage.hpp
+    src/confirmpage.hpp)
+
+set(GLADE_FILES
+    resources/gui/classinfogrid.glade
+    resources/gui/confirmgrid.glade
+    resources/gui/docinfogrid.glade
+    resources/gui/preferencesgrid.glade)
+
+add_executable("${PACKAGE}" ${SOURCES} ${HEADERS})
+target_link_libraries("${PACKAGE}" ${GTKMM_LIBRARIES} ${GTKSOURCEVIEWMM_LIBRARIES})
+
+# ---------------------
+# Doxigen documentation
+# ---------------------
+set(PROJECT_BRIEF "GTK based DOSBox GUI frontend.") # Brief description of the project.
+set(DOCUMENTATION_LANGUAGE English) # Documentation language.
+
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+    configure_file (${PROJECT_TEMPLATE_DIR}/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile @ONLY)
+
+    # Use 'make doc' to generate the documentation.
+    add_custom_target(doc
+                      ${DOXYGEN_EXECUTABLE} Doxyfile
+                      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+                      COMMENT "Generating documentation with Doxygen" VERBATIM)
+
+    message(STATUS "${Green}Use '${Blue}make doc${Green}' to generate the documentation.${ColourReset}")
 endif ()
 
-# --------------------------
-# Objetivo de desinstalación
-# --------------------------
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" @ONLY)
-    add_custom_target (uninstall COMMAND "${CMAKE_COMMAND}" -Wno-dev -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
-endif ()
+# ------------
+# Translations
+# ------------
+# - Creates a custom target named pot to create the PO Template file.
+# - Creates custom targets for every existing translation. This targets will be
+#   built within the ALL target.
+#   The PO files with the translations must be at translations directory on the
+#   project source directory.
+#   The MO files will be created at locale directory in the project binary
+#   directory.
+#   If BUILD_TYPE value is RELEASE the mo files will be installed on install
+#   target.
+# -----------------------------------------------------------------------------
+
+find_package(XGettext REQUIRED)
+
+set(TRANSLATIONS_DIR "${PROJECT_SOURCE_DIR}/translations")
+
+if(MSGFMT_FOUND)
+    file(GLOB PO_FILES "${TRANSLATIONS_DIR}/*.po")
+
+    foreach(po_file IN LISTS PO_FILES)
+        get_filename_component(language "${po_file}" NAME_WE)
+
+        add_custom_target("po-${language}" ALL
+                          mkdir -p "${PROJECT_BINARY_DIR}/locale/${language}/LC_MESSAGES"
+                          COMMAND "${MSGFMT_EXECUTABLE}"
+                          "--output=${PROJECT_BINARY_DIR}/locale/${language}/LC_MESSAGES/${PACKAGE}.mo" "${po_file}"
+                          WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+                          COMMENT "Processint PO file for locale '${language}'..." VERBATIM)
+    endforeach()
+endif()
+
+if(XGETTEXT_FOUND)
+    set(COPYRIGHT_HOLDER "Javier Campón Pichardo")
+    set(PACKAGE_BUG_REPORT javiercampon@gmail.com)
+
+    add_custom_target(pot
+                      mkdir -p "${TRANSLATIONS_DIR}"
+                      COMMAND "${XGETTEXT_EXECUTABLE}"
+                      "--default-domain=${PACKAGE}" "--output-dir=${TRANSLATIONS_DIR}" "--output=${PACKAGE}.pot"
+                      --from-code=UTF-8 --language=C++ --keyword=_ --indent --sort-by-file
+                      "--package-name=${PACKAGE}"
+                      "--package-version=${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}"
+                      "--copyright-holder=${COPYRIGHT_HOLDER}" "--msgid-bugs-address=${PACKAGE_BUG_REPORT}"
+                      ${SOURCES} ${HEADERS}
+                      COMMAND "${XGETTEXT_EXECUTABLE}"
+                      "--default-domain=${PACKAGE}" "--output-dir=${TRANSLATIONS_DIR}" "--output=${PACKAGE}.pot"
+                      --from-code=UTF-8 --language=Glade --keyword=_ --indent --sort-by-file --join-existing
+                      "--package-name=${PACKAGE}"
+                      "--package-version=${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}"
+                      "--copyright-holder=${COPYRIGHT_HOLDER}" "--msgid-bugs-address=${PACKAGE_BUG_REPORT}"
+                      ${GLADE_FILES}
+                      WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+                      COMMENT "Creating POT file..." VERBATIM)
+
+    message(STATUS "${Green}Use '${Blue}make pot${Green}' to create the PO Template file.${ColourReset}")
+    message(STATUS "${Green}The absolute path of the POT file is '${Blue}${TRANSLATIONS_DIR}/${PACKAGE}.pot${Green}'.${ColourReset}")
+endif()

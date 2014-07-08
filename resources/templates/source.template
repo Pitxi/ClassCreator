@@ -1,0 +1,26 @@
+/**
+ * @file
+ * %CLASS_NAME% class implementation.
+ * @author %AUTHOR%
+ * @date %DATE%
+ * @copyright %YEAR% %COPYRIGHT_HOLDER%
+ *
+ * %LICENSE_INFO%
+ */
+
+#include "%HEADER_FILE%"
+
+/**
+ * %NAMESPACE% namespace.
+ */
+namespace %NAMESPACE%
+{
+
+/**
+ * Constructor.
+ */
+%CLASS_NAME%::%CLASS_NAME%()
+{
+}
+
+} // %NAMESPACE%

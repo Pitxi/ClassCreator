@@ -1,82 +1,98 @@
 /**
  * @file
- * Implementación de la clase AssistantPage.
+ * AssistantPage class implementation.
  * @author Javier Campón Pichardo
  * @date 2014
- * @copyright GNU Public License Version 3
+ * @copyright 2014 Javier Campón Pichardo
+ *
+ * Distributed under the terms of the GPL version 3 license.
  */
 
-#include "assistantpage.h"
+#include "assistantpage.hpp"
+#include <gtkmm/cssprovider.h>
 
 /**
- * Espacio de nombres de la aplicación.
+ * ClassCreator namespace.
  */
 namespace ClassCreator
 {
 
 /**
  * Constructor.
- * @param header_text Texto de lacabecera de la página.
- * @param size Tamaño del texto de la cabecera. Si se omite su valor será 24.
+ * @param header Assistant page header text.
  */
-AssistantPage::AssistantPage(const Glib::ustring &header_text, int size)
+AssistantPage::AssistantPage(const Glib::ustring &header)
 {
-    this->m_header_label = Gtk::manage(new Gtk::Label(Glib::ustring(), 0.0, 0.5));
+    auto css_provider = Gtk::CssProvider::create();
+    Glib::ustring css_data = "GtkLabel.H1 {"
+                             "    padding: 10px;"
+                             "    font-size: 2em;"
+                             "    font-weight: bold;"
+                             "    border-radius: 5px 0 0 5px;"
+                             "    color: gold;"
+                             "    background-image: -gtk-gradient(linear, left top, right top, from(olivedrab), color-stop(0.5, olive), to(alpha(olive, 0)));"
+                             "}";
+
+    this->m_header_label = Gtk::manage(new Gtk::Label(header));
     this->m_content_area = Gtk::manage(new Gtk::Grid);
 
-    this->m_header_label->get_style_context()->add_class("header_label");
-    this->setHeaderMargin(50);
     this->m_header_label->set_hexpand();
-    this->setPageHeaderText(header_text, size);
+    this->m_header_label->get_style_context()->add_class("H1");
+    this->m_header_label->set_margin_bottom(30);
 
-    this->m_content_area->set_column_spacing(5);
-    this->m_content_area->set_row_spacing(5);
+    this->m_header_label->get_style_context()->add_provider(css_provider, 0);
 
-    Grid::attach(*this->m_header_label, 0, 0, 1, 1);
-    Grid::attach(*this->m_content_area,0, 1, 1, 1);
+    css_provider->load_from_data(css_data);
+
+    Gtk::Grid::attach(*this->m_header_label, 0, 0, 1, 1);
+    Gtk::Grid::attach(*this->m_content_area, 0, 1, 1, 1);
+
+    this->show_all();
 }
 
 /**
- * Establece el margen inferior de la cabecera de la página.
- * @param margin Nuevo margen inferior de la cabecera.
+ * Gets if the current page is valid.
+ * @return @c TRUE if the page is valid or @c FALSE otherwise.
  */
-void AssistantPage::setHeaderMargin(int margin)
+bool AssistantPage::is_valid()
 {
-    this->m_header_label->set_margin_bottom(margin);
+    return this->validate_page();
 }
 
 /**
- * Establece el texto del título de cabecera de la página y su tamaño.
- * @param header_text Nuevo texto.
- * @param size Tamaño del texto.
+ * Sets the header text.
+ * @param header New header text.
  */
-void AssistantPage::setPageHeaderText(const Glib::ustring &header_text, int size)
+void AssistantPage::set_header(const Glib::ustring &header)
 {
-    this->m_header_label->set_markup(Glib::ustring::compose("<span font='%1' font_weight='bold'>%2</span>", size, header_text));
+    this->m_header_label->set_text(header);
 }
 
 /**
- * Obtiene el texto del título de cabecera de la página.
- * @return Texto del título de cabecera de la página.
+ * Gets the header text.
+ * @return Current assistant page header text.
  */
-Glib::ustring AssistantPage::getPageHeaderText() const
+Glib::ustring AssistantPage::get_header() const
 {
     return this->m_header_label->get_text();
 }
 
 /**
- * Añade elementos al área de contenido de la pñagina.
- * @param child Widget que se desea añadir a la página.
- * @param left Columna
- * @param top Fila
- * @param width Anchura en columnas que ocupará el widget.
- * @param height Altura en columnas que ocupará el widget.
+ * Gets the content area Gtk::Grid.
+ * @return Current assistant page content area.
  */
-void AssistantPage::attach(Gtk::Widget &child, int left, int top, int width, int height)
+Gtk::Grid *AssistantPage::get_content_area()
 {
-    this->m_content_area->attach(child, left, top, width, height);
+    return this->m_content_area;
 }
 
-AssistantPage::~AssistantPage() {}
+/**
+ * Gets the signal emitted when the assistant page is completed.
+ * @return Assistant page completed signal.
+ */
+sigc::signal<void, bool> &AssistantPage::signal_validated()
+{
+    return this->m_signal_validated;
+}
 
 } // ClassCreator

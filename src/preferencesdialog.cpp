@@ -1,214 +1,151 @@
 /**
  * @file
- * Implementación de la clase PreferenceDialog.
+ * PreferencesDialog class implementation.
  * @author Javier Campón Pichardo
  * @date 2014
- * @copyright GNU Public License Version 3
+ * @copyright 2014 Javier Campón Pichardo
+ *
+ * Distributed under the terms of the GPL version 3 license.
  */
-#include "preferencesdialog.h"
-#include "config.h"
+
+#include "preferencesdialog.hpp"
+#include "config.hpp"
 #include <glibmm/i18n.h>
 #include <glibmm/miscutils.h>
+#include <gtkmm/builder.h>
 #include <gtkmm/grid.h>
+#include <gtkmm/image.h>
 
 /**
- * Espacio de nombres de la aplicación.
+ * ClassCreator namespace.
  */
 namespace ClassCreator
 {
 
 /**
- * Actualiza la sensibilidad del botón aceptar segun los valores de los
- * controles.
+ * Loads the default application's settings if the schema hasn't got values to
+ * load from.
  */
-void PreferencesDialog::updateButtons()
+void PreferencesDialog::load_default_settings()
 {
-    Gtk::Button *accept_button = dynamic_cast<Gtk::Button *>(this->get_widget_for_response(Gtk::RESPONSE_ACCEPT));
+    auto author           = this->m_settings->get_string("author"),
+         copyright_holder = this->m_settings->get_string("copyright-holder");
 
-    accept_button->set_sensitive(!this->getAuthor().empty() &&
-                                 !this->getDateFormat().empty() &&
-                                 !this->getLicense().empty() &&
-                                 !this->getHeaderExtension().empty() &&
-                                 !this->getSourceExtension().empty());
-}
+    if (author.empty()) {
+        this->m_author_entry->set_text(Glib::get_real_name());
+    }
 
-/**
- * Icono del Gtk::Entry pulsado.
- * @param icon_position Posición del icono pulsado.
- * @param event Estructura de evento Gdk de pulsación de botón.
- * @param entry Caja de texto que lanza el evento.
- */
-void PreferencesDialog::onEntryIconReleased(Gtk::EntryIconPosition icon_position, const GdkEventButton *event, Gtk::Entry *entry)
-{
-    if (icon_position == Gtk::EntryIconPosition::ENTRY_ICON_SECONDARY &&
-        event->button == GDK_BUTTON_PRIMARY) {
-        entry->delete_text(0, entry->get_text().length());
-    } else if (entry == this->m_def_author_entry) {
-        entry->set_text(Glib::get_real_name());
+    if (copyright_holder.empty()) {
+        this->m_copyright_holder_entry->set_text(this->m_author_entry->get_text());
     }
 }
 
 /**
- * Recupera los valores a su estado previo.
+ * Validate the dialog's widgets' values
+ * @return @c TRUE if all values are right.
  */
-void PreferencesDialog::onUndoClicked()
+bool PreferencesDialog::validate_controls() const
 {
-    this->m_settings->revert();
+    return !this->m_author_entry->get_text().empty() &&
+           !this->m_copyright_holder_entry->get_text().empty() &&
+           !this->m_header_extension_entry->get_text().empty() &&
+           !this->m_source_extension_entry->get_text().empty();
+}
+
+/**
+ * Sets the clear icon sensitivity of the Gtk::Entry which emitted the signal
+ * and validates the dialog's controls.
+ * @param sender The Gtk::Entry object which emitted the changed signal.
+ */
+void PreferencesDialog::on_entry_changed(Gtk::Entry *sender)
+{
+    sender->set_icon_sensitive(Gtk::ENTRY_ICON_SECONDARY, !sender->get_text().empty());
+
+    if (sender == this->m_date_format_entry) {
+        auto date_str    = Glib::DateTime::create_now_local().format(this->m_date_format_entry->get_text()),
+             example_str = Glib::ustring::compose("%1: %2", _("Example"), date_str);
+
+        this->m_date_example_label->set_text(example_str);
+    }
+
+    this->get_widget_for_response(Gtk::RESPONSE_ACCEPT)->set_sensitive(this->validate_controls());
+}
+
+/**
+ * Clears the text of the Gtk::Entry Object emitting the signal when the
+ * secondary icon is released.
+ * @param icon_pos The position of the released icon.
+ * @param event The button release event.
+ * @param sender The Gtk::Entry object emitting the icon_release signal.
+ */
+void PreferencesDialog::on_entry_icon_release(Gtk::EntryIconPosition icon_pos, const GdkEventButton *event, Gtk::Entry *sender)
+{
+    if (icon_pos == Gtk::ENTRY_ICON_SECONDARY && event->button == GDK_BUTTON_PRIMARY) {
+        sender->set_text(Glib::ustring());
+    }
 }
 
 /**
  * Constructor.
+ * @param modal Whether
  */
-PreferencesDialog::PreferencesDialog() :
-    Gtk::Dialog(_("Preferences"), true)
+PreferencesDialog::PreferencesDialog(bool modal) :
+    Gtk::Dialog(_("Preferences"), modal)
 {
-    auto grid = Gtk::manage(new Gtk::Grid);
-    auto *def_author_label = Gtk::manage(new Gtk::Label(_("Default author:"), 0, 0.5));
-    auto *def_date_format_label = Gtk::manage(new Gtk::Label(_("Date format:"), 0, 0.5));
-    auto *def_license_label = Gtk::manage(new Gtk::Label(_("Default license:"), 0, 0.5));
-    auto *def_header_ext_label = Gtk::manage(new Gtk::Label(_("Header file extension:"), 0, 0.5));
-    auto *def_source_ext_label = Gtk::manage(new Gtk::Label(_("Source file extension:"), 0, 0.5));
-    auto *accept_button = this->add_button(_("_Accept"), Gtk::RESPONSE_ACCEPT);
-    auto *cancel_button = this->add_button(_("_Cancel"), Gtk::RESPONSE_CANCEL);
-    auto *undo_button = Gtk::manage(new Gtk::Button(_("_Undo"), true));
-    this->m_settings = Gio::Settings::create(APP_ID, APP_PATH);
-    this->m_def_author_entry = Gtk::manage(new Gtk::Entry);
-    this->m_def_date_format_entry = Gtk::manage(new Gtk::Entry);
-    this->m_def_license_entry = Gtk::manage(new Gtk::Entry);
-    this->m_def_header_ext_cbt = Gtk::manage(new Gtk::ComboBoxText(true));
-    this->m_def_source_ext_cbt = Gtk::manage(new Gtk::ComboBoxText(true));
+    Gtk::Grid *preferences_grid = nullptr;
+    auto gui_res_path = Glib::build_filename(APP_PATH, "gui", "preferencesgrid.glade");
+    auto builder = Gtk::Builder::create_from_resource(gui_res_path);
+    auto accept_button = this->add_button("_Accept", Gtk::RESPONSE_ACCEPT),
+         cancel_button = this->add_button("_Cancel", Gtk::RESPONSE_CANCEL);
 
-    accept_button->set_image_from_icon_name("gtk-apply");
+    builder->get_widget("PreferencesGrid",      preferences_grid);
+    builder->get_widget("AuthorEntry",          this->m_author_entry);
+    builder->get_widget("CopyrightHolderEntry", this->m_copyright_holder_entry);
+    builder->get_widget("DateFormatEntry",      this->m_date_format_entry);
+    builder->get_widget("HeaderExtensionEntry", this->m_header_extension_entry);
+    builder->get_widget("SourceExtensionEntry", this->m_source_extension_entry);
+    builder->get_widget("LicenseInfoTV",        this->m_license_info_tv);
+    builder->get_widget("DateExampleLabel",     this->m_date_example_label);
 
-    cancel_button->set_image_from_icon_name("gtk-cancel");
 
-    undo_button->set_image_from_icon_name("document-revert");
+    accept_button->set_image_from_icon_name("dialog-ok");
+    accept_button->get_image()->set_margin_right(10);
 
-    this->m_def_author_entry->set_hexpand();
-    this->m_def_author_entry->set_icon_from_icon_name("edit-find", Gtk::ENTRY_ICON_PRIMARY);
+    cancel_button->set_image_from_icon_name("dialog-cancel");
+    cancel_button->get_image()->set_margin_right(10);
 
-    this->m_def_date_format_entry->set_hexpand();
+    this->get_content_area()->add(*preferences_grid);
 
-    this->m_def_license_entry->set_hexpand();
+    // Signals
+    for (auto child : preferences_grid->get_children()) {
+        auto entry = dynamic_cast<Gtk::Entry*>(child);
 
-    this->m_def_header_ext_cbt->set_hexpand();
-    this->m_def_header_ext_cbt->append("h");
-    this->m_def_header_ext_cbt->append("hpp");
-    this->m_def_header_ext_cbt->append("hxx");
-
-    this->m_def_source_ext_cbt->set_hexpand();
-    this->m_def_source_ext_cbt->append("c");
-    this->m_def_source_ext_cbt->append("cpp");
-    this->m_def_source_ext_cbt->append("cxx");
-
-    this->m_settings->bind("author", this->m_def_author_entry->property_text());
-    this->m_settings->bind("date-format", this->m_def_date_format_entry->property_text());
-    this->m_settings->bind("license", this->m_def_license_entry->property_text());
-    this->m_settings->bind("header-ext", this->m_def_header_ext_cbt->get_entry()->property_text());
-    this->m_settings->bind("source-ext", this->m_def_source_ext_cbt->get_entry()->property_text());
-    if (this->m_def_author_entry->get_text().empty()) {
-        this->m_def_author_entry->set_text(Glib::get_real_name());
-    }
-    this->m_settings->delay();
-
-    grid->set_column_spacing(5);
-    grid->set_row_spacing(5);
-    grid->set_margin_bottom(5);
-    grid->set_margin_left(5);
-    grid->set_margin_right(5);
-    grid->set_margin_top(5);
-    grid->set_column_spacing(5);
-    grid->set_row_spacing(5);
-    grid->attach(*def_author_label, 0, 0, 1, 1);
-    grid->attach(*this->m_def_author_entry, 1, 0, 1, 1);
-    grid->attach(*def_date_format_label, 0, 1, 1, 1);
-    grid->attach(*this->m_def_date_format_entry, 1, 1, 1, 1);
-    grid->attach(*def_license_label, 0, 2, 1, 1);
-    grid->attach(*this->m_def_license_entry, 1, 2, 1, 1);
-    grid->attach(*def_header_ext_label, 0, 3, 1, 1);
-    grid->attach(*this->m_def_header_ext_cbt, 1, 3, 1, 1);
-    grid->attach(*def_source_ext_label, 0, 4, 1, 1);
-    grid->attach(*this->m_def_source_ext_cbt, 1, 4, 1, 1);
-
-    this->get_action_area()->pack_end(*undo_button);
-    this->get_action_area()->reorder_child(*undo_button, 0);
-    this->set_size_request(500, -1);
-    this->set_resizable(false);
-    this->set_icon_name("preferences-system");
-    this->set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
-    this->get_content_area()->pack_start(*grid);
-    this->show_all();
-
-    for (auto child : grid->get_children()) {
-        auto entry = dynamic_cast<Gtk::Entry *>(child);
         if (entry != nullptr) {
-            entry->set_icon_from_icon_name("edit-clear", Gtk::ENTRY_ICON_SECONDARY);
-            entry->signal_changed().connect(sigc::mem_fun(*this, &PreferencesDialog::updateButtons));
-            entry->signal_icon_release().connect(sigc::bind(sigc::mem_fun(*this, &PreferencesDialog::onEntryIconReleased), entry));
-        } else {
-            auto cbt = dynamic_cast<Gtk::ComboBoxText *>(child);
-            if (cbt != nullptr) {
-                cbt->signal_changed().connect(sigc::mem_fun(*this, &PreferencesDialog::updateButtons));
-            }
+            entry->signal_changed().connect(sigc::bind<Gtk::Entry*>(sigc::mem_fun(*this, &PreferencesDialog::on_entry_changed), entry));
+            entry->signal_icon_release().connect(sigc::bind<Gtk::Entry*>(sigc::mem_fun(*this, &PreferencesDialog::on_entry_icon_release), entry));
         }
     }
-    undo_button->signal_clicked().connect(sigc::mem_fun(*this, &PreferencesDialog::onUndoClicked));
+
+    this->m_settings = Gio::Settings::create(APP_ID, APP_PATH);
+    this->m_settings->delay();
+    this->m_settings->bind("author", this->m_author_entry->property_text());
+    this->m_settings->bind("copyright-holder", this->m_copyright_holder_entry->property_text());
+    this->m_settings->bind("date-format", this->m_date_format_entry->property_text());
+    this->m_settings->bind("header-ext", this->m_header_extension_entry->property_text());
+    this->m_settings->bind("source-ext", this->m_source_extension_entry->property_text());
+    this->m_settings->bind("license-info", this->m_license_info_tv->get_buffer()->property_text());
+
+    this->load_default_settings();
 }
 
 /**
- * Obtiene el autor por defecto para la documentación de las nuevas clases.
- * @return Autor por defecto.
+ * Applies the changes made to the application's settings.
  */
-Glib::ustring PreferencesDialog::getAuthor() const
+void PreferencesDialog::apply_settings() const
 {
-    return this->m_def_author_entry->get_text();
-}
-
-/**
- * Obtiene el formato de fecha, tal como las que usa la función @c strftime.
- * Esta cadena define cómo aparecerá el campo fecha en la documentación de la
- * nueva clase.
- * @return Cadena de formato de fecha.
- */
-Glib::ustring PreferencesDialog::getDateFormat() const
-{
-    return this->m_def_date_format_entry->get_text();
-}
-
-/**
- * Obtiene la licencia que se usará por defecto para las nuevas clases.
- * @return Licencia por defecto.
- */
-Glib::ustring PreferencesDialog::getLicense() const
-{
-    return this->m_def_license_entry->get_text();
-}
-
-/**
- * Obtiene la extensión del fichero de cabecera de la nueva clase que se usará
- * por defecto.
- * @return Extensión del fichero de cabecera.
- */
-Glib::ustring PreferencesDialog::getHeaderExtension() const
-{
-    return this->m_def_header_ext_cbt->get_entry_text();
-}
-
-/**
- * Obtiene la extensión del fichero fuente de la nueva clase que se usará por
- * defecto.
- * @return Extensión del fichero fuente.
- */
-Glib::ustring PreferencesDialog::getSourceExtension() const
-{
-    return this->m_def_source_ext_cbt->get_entry_text();
-}
-
-/**
- * Aplica los cambios en la configuración de la aplicación.
- */
-void PreferencesDialog::apply() const
-{
+    // Need to set the license info manually because the binding only retrieves
+    // the data from the schema in this case.
+    this->m_settings->set_string("license-info", this->m_license_info_tv->get_buffer()->get_text());
     this->m_settings->apply();
 }
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="@APP_PATH@">
+    <file compressed="true" preprocess="to-pixdata">resources/icons/256x256/@PACKAGE@.png</file>
+    <file compressed="true" preprocess="to-pixdata">resources/icons/48x48/@PACKAGE@.png</file>
+    <file compressed="true">resources/templates/header.template</file>
+    <file compressed="true">resources/templates/source.template</file>
+    <file compressed="true">resources/gui/preferencesgrid.glade</file>
+    <file compressed="true">resources/gui/classinfogrid.glade</file>
+    <file compressed="true">resources/gui/docinfogrid.glade</file>
+    <file compressed="true">resources/gui/confirmgrid.glade</file>
+  </gresource>
+</gresources>

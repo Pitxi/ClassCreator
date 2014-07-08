@@ -1,0 +1,34 @@
+/**
+ * @file
+ * %CLASS_NAME% class declaration.
+ * @author %AUTHOR%
+ * @date %DATE%
+ * @copyright %YEAR% %COPYRIGHT_HOLDER%
+ *
+ * %LICENSE_INFO%
+ */
+
+#ifndef %INCLUDE_GUARD%
+#define %INCLUDE_GUARD%
+
+%INCLUDES%
+
+/**
+ * %NAMESPACE% namespace.
+ */
+namespace %NAMESPACE%
+{
+
+/**
+ * %CLASS_NAME% class.
+ */
+class %CLASS_DECL%
+{
+public:
+    %CLASS_NAME%();
+    virtual ~%CLASS_NAME%() {}
+};
+
+} // %NAMESPACE%
+
+#endif // %INCLUDE_GUARD%

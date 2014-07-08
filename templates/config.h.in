@@ -1,0 +1,19 @@
+/**
+ * @file
+ * Configuración de la aplicación.
+ * Este fichero contiene las definiciones necesarias para la configuración de la
+ * aplicación.
+ * @author Javier Campón Pichardo
+ * @date 2014
+ * @copyright GNU Public License Version 3
+ */
+
+#define VERSION_MAJOR @VERSION_MAJOR@ ///< Versión de la aplicación. Primer dígito.
+#define VERSION_MINOR @VERSION_MINOR@ ///< Versión de la aplicación. Segundo dígito.
+#define VERSION_MICRO @VERSION_MICRO@ ///< Versión de la aplicación. Tercer dígito.
+#define PROJECT_NAME "@PROJECT_NAME@" ///< Nombre del proyecto.
+#define APP_ID "@APP_ID@" ///< Identificador de la aplicación.
+#define APP_PATH "@APP_PATH@" ///< Ruta de la aplicación.
+#define PACKAGE "@PACKAGE@" ///< Package name.
+#define LOCALE_DIR "@LOCALE_DIR@" ///< Locales directory.
+#define @CMAKE_BUILD_TYPE@ ///< The build type.

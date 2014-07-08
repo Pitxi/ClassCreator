@@ -1,59 +1,87 @@
 /**
  * @file
- * Implementación de la clase IntroPage.
+ * IntroPage class implementation.
  * @author Javier Campón Pichardo
  * @date 2014
- * @copyright GNU Public License Version 3
+ * @copyright 2014 Javier Campón Pichardo
+ *
+ * Distributed under the terms of the GPL version 3 license.
  */
 
-#include "intropage.h"
-#include "preferencesdialog.h"
+#include "intropage.hpp"
+#include "config.hpp"
+#include "resourcemanager.hpp"
+#include "preferencesdialog.hpp"
 #include <glibmm/i18n.h>
+#include <gtkmm/label.h>
+#include <gtkmm/button.h>
+#include <gtkmm/image.h>
 
 /**
- * Espacio de nombres de la aplicación.
+ * ClassCreator namespace.
  */
 namespace ClassCreator
 {
 
 /**
- * Spawns the preferences dialog.
+ * Show the Preferences dialog.
  */
-void IntroPage::onPreferencesClicked()
+void IntroPage::on_preferences_button_clicked()
 {
-    PreferencesDialog dialog;
+    PreferencesDialog dialog(true);
 
     if (dialog.run() == Gtk::RESPONSE_ACCEPT) {
-        dialog.apply();
+        dialog.apply_settings();
     }
+}
+
+/**
+ * Validates the current page.
+ * This is a dummy method. It always returns true because the intro page is
+ * always completed.
+ * @return Always @c TRUE.
+ */
+bool IntroPage::validate_page()
+{
+    return true;
 }
 
 /**
  * Constructor.
  */
-IntroPage::IntroPage() :
-    AssistantPage(_("Create a new C++ Class"))
+IntroPage::IntroPage() : AssistantPage(_("Create a new C++ class"))
 {
-    auto *label_intro = Gtk::manage(new Gtk::Label(_("With this wizard you can create a new C++ Class for your projects.\n\n"
-                                                           "The created class includes default doxygen comments, default constructor and default destructor.\n"
-                                                           "You can also specify a namespace and the base classes from which the new class will derive.\n\n"), 0.0, 0.5));
-    Gtk::Button *pref_button = Gtk::manage(new Gtk::Button(_("Application's _Preferences"), true));
+    auto intro_label = Gtk::manage(new Gtk::Label(Glib::ustring::compose(_("The %1 tool will assist you in the creation of a new C++ class\n"
+                                                                           "by generating the needed source and header files with the provided information.\n\n"
+                                                                           "In this page you also can set the %1 preferences by clicking on the preferences button.\n\n"
+                                                                           "Press Continue to start or Cancel to exit."), PROJECT_NAME)));
+    auto preferences_button = Gtk::manage(new Gtk::Button(_("_Preferences"), true)),
+         about_button = Gtk::manage(new Gtk::Button(Glib::ustring::compose(_("_About %1..."), PROJECT_NAME), true));
 
-    label_intro->set_line_wrap_mode(Pango::WRAP_WORD);
-    label_intro->set_line_wrap();
+    this->m_header_label->set_margin_bottom(100);
 
-    pref_button->set_image_from_icon_name("preferences-system", Gtk::ICON_SIZE_DIALOG);
-    pref_button->set_tooltip_text(_("Change application's preferences"));
-    pref_button->get_image()->set_margin_right(10);
-    pref_button->get_image()->set_margin_bottom(5);
-    pref_button->get_image()->set_margin_top(5);
-    pref_button->set_halign(Gtk::ALIGN_CENTER);
+    intro_label->set_margin_bottom(100);
 
-    this->setHeaderMargin(150);
-    this->attach(*label_intro, 0, 0, 1, 1);
-    this->attach(*pref_button, 0, 1, 1, 1);
+    preferences_button->set_image_from_icon_name("preferences-system", Gtk::ICON_SIZE_DIALOG);
+    preferences_button->get_image()->set_margin_right(10);
+    preferences_button->set_relief(Gtk::RELIEF_NONE);
+    preferences_button->set_hexpand(false);
+    preferences_button->set_halign(Gtk::ALIGN_END);
 
-    pref_button->signal_clicked().connect(sigc::mem_fun(*this, &IntroPage::onPreferencesClicked));
+    about_button->set_image_from_icon_name("help-about", Gtk::ICON_SIZE_DIALOG);
+    about_button->get_image()->set_margin_right(10);
+    about_button->set_relief(Gtk::RELIEF_NONE);
+    about_button->set_hexpand(false);
+    about_button->set_halign(Gtk::ALIGN_START);
+
+    this->get_content_area()->attach(*intro_label, 0, 0, 2, 1);
+    this->get_content_area()->attach(*preferences_button, 0, 1, 1, 1);
+    this->get_content_area()->attach(*about_button, 1, 1, 1, 1);
+
+    this->show_all();
+
+    // Signals
+    preferences_button->signal_clicked().connect(sigc::mem_fun(*this, &IntroPage::on_preferences_button_clicked));
 }
 
 } // ClassCreator
