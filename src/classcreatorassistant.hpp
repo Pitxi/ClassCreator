@@ -11,7 +11,6 @@
 #ifndef CLASSCREATORASSISTANT_HPP
 #define CLASSCREATORASSISTANT_HPP
 
-#include "assistantpage.hpp"
 #include "intropage.hpp"
 #include "classinfopage.hpp"
 #include "docinfopage.hpp"

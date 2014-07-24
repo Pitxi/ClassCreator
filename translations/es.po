@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: classcreator 0.0.1\n"
 "Report-Msgid-Bugs-To: javiercampon@gmail.com\n"
-"POT-Creation-Date: 2014-07-23 17:56-0400\n"
+"POT-Creation-Date: 2014-07-24 03:25-0400\n"
 "PO-Revision-Date: 2014-07-23 17:46-0400\n"
 "Last-Translator: Javier Campón <javiercamponp@gmail.com>\n"
 "Language-Team: Spanish\n"
@@ -156,19 +156,19 @@ msgstr "Extensión del fichero de cabecera:"
 msgid "Source extension:"
 msgstr "Extensión del fichero fuente:"
 
-#: src/classcreatorassistant.cpp:80
+#: src/classcreatorassistant.cpp:79
 msgid "Introduction"
 msgstr "Introducción"
 
-#: src/classcreatorassistant.cpp:85
+#: src/classcreatorassistant.cpp:84
 msgid "Class info"
 msgstr "Información de la clase."
 
-#: src/classcreatorassistant.cpp:89
+#: src/classcreatorassistant.cpp:88
 msgid "Documentation"
 msgstr "Documentación"
 
-#: src/classcreatorassistant.cpp:94
+#: src/classcreatorassistant.cpp:93
 msgid "Confirmation"
 msgstr "Confirmación"
 
@@ -176,35 +176,35 @@ msgstr "Confirmación"
 msgid "New C++ Class information"
 msgstr "Información de la nueva clase C++"
 
-#: src/confirmpage.cpp:142
+#: src/confirmpage.cpp:141
 msgid "Choose a name and location for the header file..."
 msgstr "Escoja un nombre y una localización para el fichero de cabecera..."
 
-#: src/confirmpage.cpp:147
+#: src/confirmpage.cpp:146
 msgid "C++ header files"
 msgstr "Ficheros de cabecera C++"
 
-#: src/confirmpage.cpp:150
+#: src/confirmpage.cpp:149
 msgid "C++ source files"
 msgstr "Ficheros fuente C++"
 
-#: src/confirmpage.cpp:153
+#: src/confirmpage.cpp:152
 msgid "All files"
 msgstr "Todos los ficheros"
 
-#: src/confirmpage.cpp:158
+#: src/confirmpage.cpp:157
 msgid "Choose a name and location for the source file..."
 msgstr "Escoja un nombre y una localización para el fichero fuente..."
 
-#: src/confirmpage.cpp:177
+#: src/confirmpage.cpp:176
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/confirmpage.cpp:178
+#: src/confirmpage.cpp:177
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/confirmpage.cpp:190
+#: src/confirmpage.cpp:189
 msgid "Confirm the new C++ Class files creation"
 msgstr "Confirmar la creación de los ficheros de la nueva clase C++"
 
@@ -216,11 +216,28 @@ msgstr "Ejemplo"
 msgid "Class documentation info"
 msgstr "Información para la documentación de la clase"
 
-#: src/intropage.cpp:52
+#: src/intropage.cpp:53
+msgid ""
+"%1 is a small tool conceived as\n"
+"a wizard to aid in creating new clases for C++ projects."
+msgstr ""
+"%1 es una pequeña herramienta concebida como\n"
+"un asistente para ayudar en la creación de nuevas\n"
+"clases para proyectos C++."
+
+#: src/intropage.cpp:54
+msgid "Javier Campón Pichardo (english and spanish)"
+msgstr "Javier Campón Pichardo (inglés y español)"
+
+#: src/intropage.cpp:58
+msgid "GitHub project site"
+msgstr "Sitio del proyecto en GitHub"
+
+#: src/intropage.cpp:78
 msgid "Create a new C++ class"
 msgstr "Crear una nueva clase C++"
 
-#: src/intropage.cpp:54
+#: src/intropage.cpp:80
 msgid ""
 "The %1 tool will assist you in the creation of a new C++ class\n"
 "by generating the needed source and header files with the provided "
@@ -237,11 +254,11 @@ msgstr ""
 "\n"
 "Puse Continuar para comenzar o Cancelar para salir."
 
-#: src/intropage.cpp:58
+#: src/intropage.cpp:84
 msgid "_Preferences"
 msgstr "_Preferencias"
 
-#: src/intropage.cpp:59
+#: src/intropage.cpp:85
 msgid "_About %1..."
 msgstr "_Acerca de %1..."
 

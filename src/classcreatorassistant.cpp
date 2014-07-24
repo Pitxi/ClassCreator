@@ -11,7 +11,6 @@
 #include "classcreatorassistant.hpp"
 #include "config.hpp"
 #include <glibmm/i18n.h>
-#include <iostream>
 
 /**
  * ClassCreator namespace.

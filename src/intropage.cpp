@@ -13,9 +13,12 @@
 #include "resourcemanager.hpp"
 #include "preferencesdialog.hpp"
 #include <glibmm/i18n.h>
+#include <glibmm/miscutils.h>
+#include <giomm/settings.h>
 #include <gtkmm/label.h>
 #include <gtkmm/button.h>
 #include <gtkmm/image.h>
+#include <gtkmm/aboutdialog.h>
 
 /**
  * ClassCreator namespace.
@@ -33,6 +36,29 @@ void IntroPage::on_preferences_button_clicked()
     if (dialog.run() == Gtk::RESPONSE_ACCEPT) {
         dialog.apply_settings();
     }
+}
+
+/**
+ * Shows the about dialog.
+ */
+void IntroPage::on_about_button_clicked()
+{
+    Gtk::AboutDialog dialog;
+    Tools::ResourceManager manager(APP_PATH);
+    auto settings = Gio::Settings::create(APP_ID, APP_PATH);
+    auto icon_filename = Glib::build_filename("resources", "icons", "256x256", Glib::ustring::compose("%1.png", PACKAGE));
+
+    dialog.set_position(Gtk::WIN_POS_CENTER);
+    dialog.set_logo(manager.get_image(icon_filename));
+    dialog.set_comments(Glib::ustring::compose(_("%1 is a small tool conceived as\na wizard to aid in creating new clases for C++ projects."), PROJECT_NAME));
+    dialog.set_translator_credits(_("Javier Campón Pichardo (english and spanish)"));
+    dialog.set_copyright("Copyright 2014 Javier Campón Pichardo");
+    dialog.set_license_type(Gtk::LICENSE_GPL_3_0);
+    dialog.set_authors({"Javier Campón Pichardo"});
+    dialog.set_website_label(_("GitHub project site"));
+    dialog.set_website("https://github.com/Pitxi/ClassCreator");
+
+    dialog.run();
 }
 
 /**
@@ -58,9 +84,11 @@ IntroPage::IntroPage() : AssistantPage(_("Create a new C++ class"))
     auto preferences_button = Gtk::manage(new Gtk::Button(_("_Preferences"), true)),
          about_button = Gtk::manage(new Gtk::Button(Glib::ustring::compose(_("_About %1..."), PROJECT_NAME), true));
 
-    this->m_header_label->set_margin_bottom(100);
+    this->m_header_label->set_margin_bottom(200);
 
     intro_label->set_margin_bottom(100);
+    intro_label->set_halign(Gtk::ALIGN_CENTER);
+    intro_label->set_hexpand(true);
 
     preferences_button->set_image_from_icon_name("preferences-system", Gtk::ICON_SIZE_DIALOG);
     preferences_button->get_image()->set_margin_right(10);
@@ -82,6 +110,7 @@ IntroPage::IntroPage() : AssistantPage(_("Create a new C++ class"))
 
     // Signals
     preferences_button->signal_clicked().connect(sigc::mem_fun(*this, &IntroPage::on_preferences_button_clicked));
+    about_button->signal_clicked().connect(sigc::mem_fun(*this, &IntroPage::on_about_button_clicked));
 }
 
 } // ClassCreator

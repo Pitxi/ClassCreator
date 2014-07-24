@@ -9,7 +9,6 @@
 #include "resourcemanager.hpp"
 #include <glibmm/i18n.h>
 #include <glibmm/miscutils.h>
-#include <iostream>
 
 /**
  * Namespace used to miscelaneous tools and utilities.

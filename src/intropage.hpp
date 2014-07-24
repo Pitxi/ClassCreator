@@ -26,6 +26,7 @@ class IntroPage final : public AssistantPage
 {
 private:
     void on_preferences_button_clicked();
+    void on_about_button_clicked();
     bool validate_page();
 
 public:

@@ -16,7 +16,6 @@
 #include <gtkmm/builder.h>
 #include <gtkmm/cssprovider.h>
 #include <gtkmm/filechooserdialog.h>
-#include <iostream>
 
 /**
  * ClassCreator namespace.
