@@ -93,7 +93,7 @@ PreferencesDialog::PreferencesDialog(bool modal) :
     Gtk::Dialog(_("Preferences"), modal)
 {
     Gtk::Grid *preferences_grid = nullptr;
-    auto gui_res_path = Glib::build_filename(APP_PATH, "gui", "preferencesgrid.glade");
+    auto gui_res_path = Glib::build_filename(APP_PATH, "resources", "gui", "preferencesgrid.glade");
     auto builder = Gtk::Builder::create_from_resource(gui_res_path);
     auto accept_button = this->add_button("_Accept", Gtk::RESPONSE_ACCEPT),
          cancel_button = this->add_button("_Cancel", Gtk::RESPONSE_CANCEL);

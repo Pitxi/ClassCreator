@@ -118,7 +118,7 @@ target_link_libraries("${PACKAGE}" ${GTKMM_LIBRARIES} ${GTKSOURCEVIEWMM_LIBRARIE
 # ---------------------
 # Doxigen documentation
 # ---------------------
-set(PROJECT_BRIEF "GTK based DOSBox GUI frontend.") # Brief description of the project.
+set(PROJECT_BRIEF "GTK based C++ Class creation tool.") # Brief description of the project.
 set(DOCUMENTATION_LANGUAGE English) # Documentation language.
 
 find_package(Doxygen)
@@ -154,6 +154,7 @@ set(TRANSLATIONS_DIR "${PROJECT_SOURCE_DIR}/translations")
 
 if(MSGFMT_FOUND)
     file(GLOB PO_FILES "${TRANSLATIONS_DIR}/*.po")
+    set(LOCALE_DIR "/usr/share/locale")
 
     foreach(po_file IN LISTS PO_FILES)
         get_filename_component(language "${po_file}" NAME_WE)
@@ -192,4 +193,40 @@ if(XGETTEXT_FOUND)
 
     message(STATUS "${Green}Use '${Blue}make pot${Green}' to create the PO Template file.${ColourReset}")
     message(STATUS "${Green}The absolute path of the POT file is '${Blue}${TRANSLATIONS_DIR}/${PACKAGE}.pot${Green}'.${ColourReset}")
+endif()
+
+# --------------
+# Install target
+# --------------
+
+# Install and uninstall targets will be available only in RELEASE build type.
+if(CMAKE_BUILD_TYPE STREQUAL "RELEASE")
+    set(DESKTOP_FILES_DIR "/usr/share/applications")
+    set(GSETTINGS_SCHEMAS_DIR "/usr/share/glib-2.0/schemas")
+    set(CMAKE_INSTALL_PREFIX "/usr")
+
+    get_property(EXEC_NAME TARGET classcreator PROPERTY NAME)
+    configure_file("${PROJECT_TEMPLATE_DIR}/desktop.in" "${PROJECT_BINARY_DIR}/${PACKAGE}.desktop" @ONLY)
+
+    install(TARGETS classcreator
+            RUNTIME DESTINATION bin
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib)
+    install(DIRECTORY "${PROJECT_BINARY_DIR}/locale/" DESTINATION "${LOCALE_DIR}"
+            FILES_MATCHING PATTERN "*.mo")
+    install(DIRECTORY "${PROJECT_BINARY_DIR}/schemas/" DESTINATION "${GSETTINGS_SCHEMAS_DIR}"
+            FILES_MATCHING PATTERN "*.xml")
+    install(FILES "${PROJECT_BINARY_DIR}/${PACKAGE}.desktop" DESTINATION "${DESKTOP_FILES_DIR}") # Desktop file for system menus/dash.
+    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/scalable/${EXEC_NAME}.svg" DESTINATION "share/icons/hicolor/scalable/apps")
+    install(CODE "execute_process(COMMAND glib-compile-schemas \"${GSETTINGS_SCHEMAS_DIR}\")") # Compiling gschemas.
+
+    message(STATUS "${Green}Use '${Blue}make install${Green}' to install the application.${ColourReset}")
+
+    # ----------------
+    # Uninstall target
+    # ----------------
+    configure_file("${PROJECT_TEMPLATE_DIR}/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" @ONLY)
+    add_custom_target(uninstall COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+
+    message(STATUS "${Green}Use '${Blue}make uninstall${Green}' to uninstall the application.${ColourReset}")
 endif()

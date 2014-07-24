@@ -15,5 +15,5 @@
 #define APP_ID "org.kazires.classcreator" ///< Identificador de la aplicación.
 #define APP_PATH "/org/kazires/classcreator/" ///< Ruta de la aplicación.
 #define PACKAGE "classcreator" ///< Package name.
-#define LOCALE_DIR "./locale" ///< Locales directory.
-#define DEBUG ///< The build type.
+#define LOCALE_DIR "/usr/share/locale" ///< Locales directory.
+#define RELEASE ///< The build type.
