@@ -1,12 +1,22 @@
 # ------------------------------------------------------------------------------
-# A GTK based GUI Utility to create the header and source files for a C++ Class.
+# A GTK based C++ class creation tool.
 #
-# Copyleft 2014 Javier Campón Pichardo
+# Class Creator works as a wizard, retrieving the needed information from the
+# user so it can create the source and header files of the class.
 #
-# Distributed under the GNU GPL version 3 license.
+# Author: Javier Campón Pichardo
+# Date: 25/07/2014
+# Copyright 2014 Javier Campón Pichardo
 #
-# This software is distributed WITHOUT ANY WARRANTY; See the license for more
-# information.
+# Distributeed under the terms of the GNU General Public License version 3 or
+# later.
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this software. If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
@@ -116,9 +126,9 @@ add_executable("${PACKAGE}" ${SOURCES} ${HEADERS})
 target_link_libraries("${PACKAGE}" ${GTKMM_LIBRARIES} ${GTKSOURCEVIEWMM_LIBRARIES})
 
 # ---------------------
-# Doxigen documentation
+# Doxygen documentation
 # ---------------------
-set(PROJECT_BRIEF "GTK based C++ Class creation tool.") # Brief description of the project.
+set(PROJECT_BRIEF "A GTK based C++ class creation tool.") # Brief description of the project.
 set(DOCUMENTATION_LANGUAGE English) # Documentation language.
 
 find_package(Doxygen)
@@ -164,7 +174,7 @@ if(MSGFMT_FOUND)
                           COMMAND "${MSGFMT_EXECUTABLE}"
                           "--output=${PROJECT_BINARY_DIR}/locale/${language}/LC_MESSAGES/${PACKAGE}.mo" "${po_file}"
                           WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-                          COMMENT "Processint PO file for locale '${language}'..." VERBATIM)
+                          COMMENT "Processing PO file for locale '${language}'..." VERBATIM)
     endforeach()
 endif()
 
@@ -205,7 +215,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "RELEASE")
     set(GSETTINGS_SCHEMAS_DIR "/usr/share/glib-2.0/schemas")
     set(CMAKE_INSTALL_PREFIX "/usr")
 
-    get_property(EXEC_NAME TARGET classcreator PROPERTY NAME)
     configure_file("${PROJECT_TEMPLATE_DIR}/desktop.in" "${PROJECT_BINARY_DIR}/${PACKAGE}.desktop" @ONLY)
 
     install(TARGETS classcreator
@@ -216,9 +225,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "RELEASE")
             FILES_MATCHING PATTERN "*.mo")
     install(DIRECTORY "${PROJECT_BINARY_DIR}/schemas/" DESTINATION "${GSETTINGS_SCHEMAS_DIR}"
             FILES_MATCHING PATTERN "*.xml")
+    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/scalable/${PACKAGE}.svg" DESTINATION "/usr/share/icons/hicolor/scalable/apps") # Scalable icon
+    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/48x48/${PACKAGE}.png" DESTINATION "/usr/share/icons/hicolor/48x48/apps") # 48x48 icon
+    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/256x256/${PACKAGE}.png" DESTINATION "/usr/share/icons/hicolor/256x256/apps") # 256x256 icon
     install(FILES "${PROJECT_BINARY_DIR}/${PACKAGE}.desktop" DESTINATION "${DESKTOP_FILES_DIR}") # Desktop file for system menus/dash.
-    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/scalable/${EXEC_NAME}.svg" DESTINATION "share/icons/hicolor/scalable/apps")
     install(CODE "execute_process(COMMAND glib-compile-schemas \"${GSETTINGS_SCHEMAS_DIR}\")") # Compiling gschemas.
+    install(CODE "execute_process(COMMAND gtk-update-icon-cache \"/usr/share/icons/hicolor\")") # Recreating the icons cache after instalation.
 
     message(STATUS "${Green}Use '${Blue}make install${Green}' to install the application.${ColourReset}")
 
@@ -226,7 +238,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "RELEASE")
     # Uninstall target
     # ----------------
     configure_file("${PROJECT_TEMPLATE_DIR}/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" @ONLY)
-    add_custom_target(uninstall COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+    add_custom_target(uninstall
+                      COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+                      COMMAND glib-compile-schemas "${GSETTINGS_SCHEMAS_DIR}"
+                      COMMAND gtk-update-icon-cache "/usr/share/icons/hicolor"
+                      COMMENT "Deleting installed files...")
 
     message(STATUS "${Green}Use '${Blue}make uninstall${Green}' to uninstall the application.${ColourReset}")
 endif()

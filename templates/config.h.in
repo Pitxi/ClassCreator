@@ -1,19 +1,27 @@
 /**
  * @file
- * Configuración de la aplicación.
- * Este fichero contiene las definiciones necesarias para la configuración de la
- * aplicación.
+ * This header file contains macros used in @PACKAGE@.
  * @author Javier Campón Pichardo
- * @date 2014
- * @copyright GNU Public License Version 3
+ * @date 2014/07/25
+ * @copyright 2014 Javier Campón Pichardo
+ *
+ * Distributeed under the terms of the GNU General Public License version 3 or
+ * later.
+ *
+ * This software is distributed WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define VERSION_MAJOR @VERSION_MAJOR@ ///< Versión de la aplicación. Primer dígito.
-#define VERSION_MINOR @VERSION_MINOR@ ///< Versión de la aplicación. Segundo dígito.
-#define VERSION_MICRO @VERSION_MICRO@ ///< Versión de la aplicación. Tercer dígito.
+#define VERSION_MAJOR @VERSION_MAJOR@ ///< Package version major.
+#define VERSION_MINOR @VERSION_MINOR@ ///< Package version minor.
+#define VERSION_MICRO @VERSION_MICRO@ ///< Package version micro.
 #define PROJECT_NAME "@PROJECT_NAME@" ///< Nombre del proyecto.
-#define APP_ID "@APP_ID@" ///< Identificador de la aplicación.
-#define APP_PATH "@APP_PATH@" ///< Ruta de la aplicación.
+#define APP_ID "@APP_ID@" ///< Application ID.
+#define APP_PATH "@APP_PATH@" ///< Application path.
 #define PACKAGE "@PACKAGE@" ///< Package name.
 #define LOCALE_DIR "@LOCALE_DIR@" ///< Locales directory.
 #define @CMAKE_BUILD_TYPE@ ///< The build type.

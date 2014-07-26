@@ -1,7 +1,8 @@
 [Desktop Entry]
-Name=@PACKAGE@
-Exec=@EXEC_NAME@
-Icon=@EXEC_NAME@
+Version=1.0
+Name=@PROJECT_NAME@
+Exec=@PACKAGE@
+Icon=@PACKAGE@
 Type=Application
-Categories=Development
+Categories=Development;
 Comment=@PROJECT_BRIEF@
