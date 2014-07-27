@@ -162,7 +162,7 @@ msgstr "Introducción"
 
 #: src/classcreatorassistant.cpp:84
 msgid "Class info"
-msgstr "Información de la clase."
+msgstr "Información de la clase"
 
 #: src/classcreatorassistant.cpp:88
 msgid "Documentation"

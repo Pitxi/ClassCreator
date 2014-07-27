@@ -9,7 +9,7 @@
  */
 
 #include "docinfopage.hpp"
-#include "config.hpp"
+#include "config.h"
 #include <glibmm/i18n.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/regex.h>

@@ -9,7 +9,7 @@
  */
 
 #include "classcreatorassistant.hpp"
-#include "config.hpp"
+#include "config.h"
 #include <glibmm/i18n.h>
 
 /**

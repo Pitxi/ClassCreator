@@ -16,12 +16,13 @@
  * along with this software. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define VERSION_MAJOR @VERSION_MAJOR@ ///< Package version major.
-#define VERSION_MINOR @VERSION_MINOR@ ///< Package version minor.
-#define VERSION_MICRO @VERSION_MICRO@ ///< Package version micro.
+#define VERSION_MAJOR @PROJECT_VERSION_MAJOR@ ///< Package version major.
+#define VERSION_MINOR @PROJECT_VERSION_MINOR@ ///< Package version minor.
+#define VERSION_PATCH @PROJECT_VERSION_PATCH@ ///< Package version patch.
+#define VERSION_TWEAK @PROJECT_VERSION_TWEAK@ ///< Package version tweak.
 #define PROJECT_NAME "@PROJECT_NAME@" ///< Nombre del proyecto.
 #define APP_ID "@APP_ID@" ///< Application ID.
 #define APP_PATH "@APP_PATH@" ///< Application path.
 #define PACKAGE "@PACKAGE@" ///< Package name.
 #define LOCALE_DIR "@LOCALE_DIR@" ///< Locales directory.
-#define @CMAKE_BUILD_TYPE@ ///< The build type.
+#define @BUILD_TYPE@ ///< The build type.

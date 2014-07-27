@@ -20,55 +20,21 @@
 # ------------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-project("Class Creator")
+cmake_policy(VERSION 2.8)
 
 # ---------------------
 # Project configuration
 # ---------------------
+project("Class Creator")
 
 # Include custom modules path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake modules")
+find_package(ConfigPackage REQUIRED)
+
+ConfigPackage("classcreator" "1.0.0.0" "org.kazires")
 
 # Colours for messages.
 find_package(Colours)
-
-# Use DEBUG build type by default.
-if(NOT CMAKE_BUILD_TYPE STREQUAL "RELEASE")
-    set(CMAKE_BUILD_TYPE "DEBUG")
-endif()
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake modules")
-set(PROJECT_TEMPLATE_DIR "${PROJECT_SOURCE_DIR}/templates")
-
-set(VERSION_MAJOR 0)
-set(VERSION_MINOR 0)
-set(VERSION_MICRO 1)
-
-set(PACKAGE     "classcreator")
-set(LOCALE_DIR  "/usr/share/locale")
-if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-    set(LOCALE_DIR "./locale")
-endif()
-set(APP_ID      "org.kazires.${PACKAGE}")
-set(APP_PATH    "/org/kazires/${PACKAGE}/")
-
-configure_file("${PROJECT_TEMPLATE_DIR}/config.h.in"      "${PROJECT_SOURCE_DIR}/src/config.hpp" @ONLY)
-configure_file("${PROJECT_TEMPLATE_DIR}/gschema.xml.in"   "${PROJECT_BINARY_DIR}/schemas/${APP_ID}.gschema.xml" @ONLY)
-configure_file("${PROJECT_TEMPLATE_DIR}/gresource.xml.in" "${PROJECT_BINARY_DIR}/${APP_ID}.gresource.xml" @ONLY)
-
-# Compiling local schemas.
-add_custom_target(gschema ALL
-                  COMMAND glib-compile-schemas "${PROJECT_BINARY_DIR}/schemas"
-                  COMMENT "Compiling GLib settings schema file..." VERBATIM)
-
-# Embedding resources into the code.
-execute_process(COMMAND glib-compile-resources --generate-source "--sourcedir=${PROJECT_SOURCE_DIR}" "${APP_ID}.gresource.xml" "--target=${PROJECT_SOURCE_DIR}/src/resources.c"
-                COMMAND glib-compile-resources --generate-header "--sourcedir=${PROJECT_SOURCE_DIR}" "${APP_ID}.gresource.xml" "--target=${PROJECT_SOURCE_DIR}/src/resources.h"
-                WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-                RESULT_VARIABLE   Result
-                ERROR_VARIABLE    ErrorOutput)
-if(Resutl EQUAL 0)
-    message(FATAL_ERROR "${Red}Error Code ${Result}\nError Message: ${ErrorOutput}${ColourReset}")
-endif()
 
 # ----------------------
 # Compiler configuration
@@ -105,7 +71,7 @@ set(SOURCES
     src/confirmpage.cpp)
 
 set(HEADERS
-    src/config.hpp
+    src/config.h
     src/resources.h
     src/resourcemanager.hpp
     src/classcreatorassistant.hpp
@@ -129,19 +95,17 @@ target_link_libraries("${PACKAGE}" ${GTKMM_LIBRARIES} ${GTKSOURCEVIEWMM_LIBRARIE
 # Doxygen documentation
 # ---------------------
 set(PROJECT_BRIEF "A GTK based C++ class creation tool.") # Brief description of the project.
-set(DOCUMENTATION_LANGUAGE English) # Documentation language.
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
+    set(DOCUMENTATION_LANGUAGE English) # Documentation language.
     configure_file (${PROJECT_TEMPLATE_DIR}/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile @ONLY)
 
     # Use 'make doc' to generate the documentation.
-    add_custom_target(doc
+    add_custom_target(doc ALL
                       ${DOXYGEN_EXECUTABLE} Doxyfile
                       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
                       COMMENT "Generating documentation with Doxygen" VERBATIM)
-
-    message(STATUS "${Green}Use '${Blue}make doc${Green}' to generate the documentation.${ColourReset}")
 endif ()
 
 # ------------
@@ -164,7 +128,6 @@ set(TRANSLATIONS_DIR "${PROJECT_SOURCE_DIR}/translations")
 
 if(MSGFMT_FOUND)
     file(GLOB PO_FILES "${TRANSLATIONS_DIR}/*.po")
-    set(LOCALE_DIR "/usr/share/locale")
 
     foreach(po_file IN LISTS PO_FILES)
         get_filename_component(language "${po_file}" NAME_WE)
@@ -188,7 +151,7 @@ if(XGETTEXT_FOUND)
                       "--default-domain=${PACKAGE}" "--output-dir=${TRANSLATIONS_DIR}" "--output=${PACKAGE}.pot"
                       --from-code=UTF-8 --language=C++ --keyword=_ --indent --sort-by-file
                       "--package-name=${PACKAGE}"
-                      "--package-version=${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}"
+                      "--package-version=${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK}"
                       "--copyright-holder=${COPYRIGHT_HOLDER}" "--msgid-bugs-address=${PACKAGE_BUG_REPORT}"
                       ${SOURCES} ${HEADERS}
                       COMMAND "${XGETTEXT_EXECUTABLE}"
@@ -211,9 +174,8 @@ endif()
 
 # Install and uninstall targets will be available only in RELEASE build type.
 if(CMAKE_BUILD_TYPE STREQUAL "RELEASE")
-    set(DESKTOP_FILES_DIR "/usr/share/applications")
-    set(GSETTINGS_SCHEMAS_DIR "/usr/share/glib-2.0/schemas")
     set(CMAKE_INSTALL_PREFIX "/usr")
+    set(GSCHEMA_DIR "${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas")
 
     configure_file("${PROJECT_TEMPLATE_DIR}/desktop.in" "${PROJECT_BINARY_DIR}/${PACKAGE}.desktop" @ONLY)
 
@@ -223,14 +185,14 @@ if(CMAKE_BUILD_TYPE STREQUAL "RELEASE")
             ARCHIVE DESTINATION lib)
     install(DIRECTORY "${PROJECT_BINARY_DIR}/locale/" DESTINATION "${LOCALE_DIR}"
             FILES_MATCHING PATTERN "*.mo")
-    install(DIRECTORY "${PROJECT_BINARY_DIR}/schemas/" DESTINATION "${GSETTINGS_SCHEMAS_DIR}"
+    install(DIRECTORY "${PROJECT_BINARY_DIR}/schemas/" DESTINATION "${GSCHEMA_DIR}"
             FILES_MATCHING PATTERN "*.xml")
-    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/scalable/${PACKAGE}.svg" DESTINATION "/usr/share/icons/hicolor/scalable/apps") # Scalable icon
-    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/48x48/${PACKAGE}.png" DESTINATION "/usr/share/icons/hicolor/48x48/apps") # 48x48 icon
-    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/256x256/${PACKAGE}.png" DESTINATION "/usr/share/icons/hicolor/256x256/apps") # 256x256 icon
-    install(FILES "${PROJECT_BINARY_DIR}/${PACKAGE}.desktop" DESTINATION "${DESKTOP_FILES_DIR}") # Desktop file for system menus/dash.
-    install(CODE "execute_process(COMMAND glib-compile-schemas \"${GSETTINGS_SCHEMAS_DIR}\")") # Compiling gschemas.
-    install(CODE "execute_process(COMMAND gtk-update-icon-cache \"/usr/share/icons/hicolor\")") # Recreating the icons cache after instalation.
+    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/scalable/${PACKAGE}.svg" DESTINATION "share/icons/hicolor/scalable/apps") # Scalable icon
+    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/48x48/${PACKAGE}.png" DESTINATION "share/icons/hicolor/48x48/apps") # 48x48 icon
+    install(FILES "${PROJECT_SOURCE_DIR}/resources/icons/256x256/${PACKAGE}.png" DESTINATION "share/icons/hicolor/256x256/apps") # 256x256 icon
+    install(FILES "${PROJECT_BINARY_DIR}/${PACKAGE}.desktop" DESTINATION "share/applications") # Desktop file for system menus/dash.
+    install(CODE "execute_process(COMMAND glib-compile-schemas \"${GSCHEMA_DIR}\")") # Compiling gschemas.
+    install(CODE "execute_process(COMMAND gtk-update-icon-cache \"${CMAKE_INSTALL_PREFIX}/share/icons/hicolor\")") # Recreating the icons cache after instalation.
 
     message(STATUS "${Green}Use '${Blue}make install${Green}' to install the application.${ColourReset}")
 
@@ -240,8 +202,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "RELEASE")
     configure_file("${PROJECT_TEMPLATE_DIR}/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" @ONLY)
     add_custom_target(uninstall
                       COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-                      COMMAND glib-compile-schemas "${GSETTINGS_SCHEMAS_DIR}"
-                      COMMAND gtk-update-icon-cache "/usr/share/icons/hicolor"
+                      COMMAND glib-compile-schemas "${GSCHEMA_DIR}"
+                      COMMAND gtk-update-icon-cache "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor"
                       COMMENT "Deleting installed files...")
 
     message(STATUS "${Green}Use '${Blue}make uninstall${Green}' to uninstall the application.${ColourReset}")

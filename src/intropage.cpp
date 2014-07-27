@@ -9,7 +9,7 @@
  */
 
 #include "intropage.hpp"
-#include "config.hpp"
+#include "config.h"
 #include "resourcemanager.hpp"
 #include "preferencesdialog.hpp"
 #include <glibmm/i18n.h>

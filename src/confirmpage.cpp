@@ -9,7 +9,7 @@
  */
 
 #include "confirmpage.hpp"
-#include "config.hpp"
+#include "config.h"
 #include <gtkmm/object.h>
 #include <glibmm/i18n.h>
 #include <glibmm/miscutils.h>
