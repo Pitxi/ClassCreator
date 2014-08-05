@@ -5,7 +5,7 @@ Installation instructions for ClassCreator
   terminal in the source folder (Where the CMakeLists.txt file is):
 
 1. make build && cd build
-2. cmake -DCMAKE_BUILD_TYPE=RELEASE
+2. cmake -DCMAKE_BUILD_TYPE=RELEASE ..
 3. make
 4. make install (As superuser. it will install with /usr prefix)
 

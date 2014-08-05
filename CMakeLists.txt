@@ -1,4 +1,6 @@
 # ------------------------------------------------------------------------------
+# Class Creator
+#
 # A GTK based C++ class creation tool.
 #
 # Class Creator works as a wizard, retrieving the needed information from the
@@ -26,11 +28,9 @@ cmake_policy(VERSION 2.8)
 # Project configuration
 # ---------------------
 project("Class Creator")
-
 # Include custom modules path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake modules")
 find_package(ConfigPackage REQUIRED)
-
 ConfigPackage("classcreator" "1.0.0.0" "org.kazires")
 
 # Colours for messages.
@@ -179,7 +179,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "RELEASE")
 
     configure_file("${PROJECT_TEMPLATE_DIR}/desktop.in" "${PROJECT_BINARY_DIR}/${PACKAGE}.desktop" @ONLY)
 
-    install(TARGETS classcreator
+    install(TARGETS ${PACKAGE}
             RUNTIME DESTINATION bin
             LIBRARY DESTINATION lib
             ARCHIVE DESTINATION lib)
