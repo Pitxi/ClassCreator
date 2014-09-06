@@ -265,7 +265,7 @@ void ConfirmPage::generate_header(const Glib::ustring &author,
                                   bool include_doc)
 {
     auto header_template = this->m_resource_manager.get_text("templates/header.template"),
-         class_decl   = Glib::ustring::compose("class %1%2", class_name, base_classes);
+         class_decl      = Glib::ustring::compose("%1%2", class_name, base_classes);
     auto s_buffer = this->m_header_sv->get_source_buffer();
     auto date = Glib::DateTime::create_now_local();
 
